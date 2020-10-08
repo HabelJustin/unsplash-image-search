@@ -6,7 +6,7 @@ import androidx.core.view.isVisible
 import androidx.paging.LoadState
 import androidx.paging.LoadStateAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.unsplashimagesearch.databinding.UnsplashPhotoLoadStateFooterBinding
+import com.example.unsplashimagesearch.databinding.UnsplashPhotoLoadStateHeaderFooterBinding
 
 class UnSplashPhotoLoadStateAdapter(private val retry: () -> Unit) : LoadStateAdapter<UnSplashPhotoLoadStateAdapter.LoadStateViewHolder>() {
 
@@ -14,7 +14,7 @@ class UnSplashPhotoLoadStateAdapter(private val retry: () -> Unit) : LoadStateAd
         parent: ViewGroup,
         loadState: LoadState
     ): UnSplashPhotoLoadStateAdapter.LoadStateViewHolder {
-        val binding = UnsplashPhotoLoadStateFooterBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = UnsplashPhotoLoadStateHeaderFooterBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return LoadStateViewHolder(binding)
     }
 
@@ -25,7 +25,7 @@ class UnSplashPhotoLoadStateAdapter(private val retry: () -> Unit) : LoadStateAd
        holder.bind(loadState)
     }
 
-    inner class LoadStateViewHolder(private val binding: UnsplashPhotoLoadStateFooterBinding): RecyclerView.ViewHolder(binding.root){
+    inner class LoadStateViewHolder(private val binding: UnsplashPhotoLoadStateHeaderFooterBinding): RecyclerView.ViewHolder(binding.root){
 
         init {
             binding.buttonRetry.setOnClickListener { retry.invoke() }

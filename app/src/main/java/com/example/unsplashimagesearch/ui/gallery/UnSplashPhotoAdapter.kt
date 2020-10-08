@@ -11,7 +11,7 @@ import com.example.unsplashimagesearch.R
 import com.example.unsplashimagesearch.data.UnSplashPhoto
 import com.example.unsplashimagesearch.databinding.ItemUnsplashPhotoBinding
 
-class UnSplashPhotoAdapter :
+class UnSplashPhotoAdapter(private val listener: OnItemClickListener) :
     PagingDataAdapter<UnSplashPhoto, UnSplashPhotoAdapter.PhotoViewHolder>(PHOTO_COMPARATOR) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoViewHolder {
@@ -28,8 +28,18 @@ class UnSplashPhotoAdapter :
         }
     }
 
-    class PhotoViewHolder(private val binding: ItemUnsplashPhotoBinding) :
+    inner class PhotoViewHolder(private val binding: ItemUnsplashPhotoBinding) :
         RecyclerView.ViewHolder(binding.root) {
+
+        init {
+            binding.root.setOnClickListener {
+                val position = bindingAdapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    val photo = getItem(position) as UnSplashPhoto
+                    listener.onItemClick(photo)
+                }
+            }
+        }
 
         fun bind(photo: UnSplashPhoto) {
             binding.apply {
@@ -45,6 +55,9 @@ class UnSplashPhotoAdapter :
         }
     }
 
+    interface OnItemClickListener {
+        fun onItemClick(photo: UnSplashPhoto)
+    }
 
     companion object {
         private val PHOTO_COMPARATOR = object : DiffUtil.ItemCallback<UnSplashPhoto>() {

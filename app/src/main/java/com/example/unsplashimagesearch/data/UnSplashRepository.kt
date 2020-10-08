@@ -14,7 +14,7 @@ class UnSplashRepository @Inject constructor(private val unSplashApi: UnSplashAp
     fun getSearchResults(query: String) =
         Pager(
             config = PagingConfig(
-                pageSize = 20,
+                pageSize = 10,
                 maxSize = 100,
                 enablePlaceholders = false
             ),

@@ -7,17 +7,20 @@ import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import com.example.unsplashimagesearch.R
+import com.example.unsplashimagesearch.data.UnSplashPhoto
 import com.example.unsplashimagesearch.databinding.FragmentGalleryBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class Gallery : Fragment(R.layout.fragment_gallery) {
+class Gallery : Fragment(R.layout.fragment_gallery), UnSplashPhotoAdapter.OnItemClickListener {
 
     private val viewModel by viewModels<GalleryViewModel>()
+
+    private val adapter by lazy { UnSplashPhotoAdapter(this@Gallery) }
 
     private var _binding: FragmentGalleryBinding? = null
     private val binding get() = _binding!!
@@ -26,8 +29,6 @@ class Gallery : Fragment(R.layout.fragment_gallery) {
         super.onViewCreated(view, savedInstanceState)
 
         _binding = FragmentGalleryBinding.bind(view)
-
-        val adapter = UnSplashPhotoAdapter()
 
         val retryAdapter = { adapter.retry() }
 
@@ -53,16 +54,21 @@ class Gallery : Fragment(R.layout.fragment_gallery) {
                 buttonRetry.isVisible = loadState.source.refresh is LoadState.Error
                 textViewError.isVisible = loadState.source.refresh is LoadState.Error
 
-                if(loadState.source.refresh is LoadState.NotLoading && loadState.append.endOfPaginationReached && adapter.itemCount < 1){
+                if (loadState.source.refresh is LoadState.NotLoading && loadState.append.endOfPaginationReached && adapter.itemCount < 1) {
                     recyclerView.isVisible = false
                     textViewEmpty.isVisible = true
-                }else{
+                } else {
                     textViewEmpty.isVisible = false
                 }
             }
         }
 
         setHasOptionsMenu(true)
+    }
+
+    override fun onItemClick(photo: UnSplashPhoto) {
+        val action = GalleryDirections.actionGalleryToDetailsFragment(photo)
+        findNavController().navigate(action)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -73,10 +79,10 @@ class Gallery : Fragment(R.layout.fragment_gallery) {
         val searchItem = menu.findItem(R.id.menu_search)
         val searchView = searchItem.actionView as SearchView
 
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
 
-                if(query != null){
+                if (query != null) {
                     binding.recyclerView.scrollToPosition(0)
                     viewModel.searchPhotos(query)
                     searchView.clearFocus()
