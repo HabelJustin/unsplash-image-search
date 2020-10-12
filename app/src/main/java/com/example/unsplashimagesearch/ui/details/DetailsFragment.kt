@@ -1,6 +1,8 @@
 package com.example.unsplashimagesearch.ui.details
 
+import android.content.Intent
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -13,6 +15,7 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
+import com.example.unsplashimagesearch.MainActivity
 import com.example.unsplashimagesearch.databinding.FragmentDetailsBinding
 import com.example.unsplashimagesearch.R
 
@@ -33,10 +36,15 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
         val imgDesc = navArgs.photo.description
         val username = navArgs.photo.user.username
 
-        binding.apply {
-            Glide.with(requireContext()).load(imgUri).centerCrop().transition(
-                DrawableTransitionOptions.withCrossFade()
+        // set appbar title
+        (requireActivity() as MainActivity).supportActionBar?.title = username
 
+        binding.apply {
+            Glide.with(requireContext())
+                .load(imgUri)
+                .centerCrop()
+                .transition(
+                DrawableTransitionOptions.withCrossFade()
             ).error(R.drawable.ic_broken_image)
                 .listener(object : RequestListener<Drawable> {
                     override fun onLoadFailed(
@@ -45,9 +53,9 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
                         target: Target<Drawable>?,
                         isFirstResource: Boolean
                     ): Boolean {
+                        progressBar.isVisible = false
                         return false
                     }
-
                     override fun onResourceReady(
                         resource: Drawable?,
                         model: Any?,
@@ -56,7 +64,7 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
                         isFirstResource: Boolean
                     ): Boolean {
                         textViewCreator.isVisible = true
-                        textViewDescription.isVisible = true
+                        textViewDescription.isVisible = imgDesc != null
                         progressBar.isVisible = false
                         return false
                     }
@@ -65,6 +73,15 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
 
             textViewDescription.text = imgDesc
             textViewCreator.text = "Photo By $username"
+
+            val uri = Uri.parse(navArgs.photo.user.attributionUrl)
+            val intent = Intent(Intent.ACTION_VIEW, uri)
+
+            textViewCreator.apply {
+                text = "Photo by $username"
+                setOnClickListener{ startActivity(intent) }
+                paint.isUnderlineText = true
+            }
         }
     }
 
