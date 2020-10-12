@@ -44,8 +44,9 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
                 .load(imgUri)
                 .centerCrop()
                 .transition(
-                DrawableTransitionOptions.withCrossFade()
-            ).error(R.drawable.ic_broken_image)
+                    DrawableTransitionOptions.withCrossFade()
+                )
+                .error(R.drawable.ic_broken_image)
                 .listener(object : RequestListener<Drawable> {
                     override fun onLoadFailed(
                         e: GlideException?,
@@ -56,6 +57,7 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
                         progressBar.isVisible = false
                         return false
                     }
+
                     override fun onResourceReady(
                         resource: Drawable?,
                         model: Any?,
@@ -79,7 +81,7 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
 
             textViewCreator.apply {
                 text = "Photo by $username"
-                setOnClickListener{ startActivity(intent) }
+                setOnClickListener { startActivity(intent) }
                 paint.isUnderlineText = true
             }
         }
